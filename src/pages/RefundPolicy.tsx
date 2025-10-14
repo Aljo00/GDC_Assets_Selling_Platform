@@ -24,7 +24,7 @@ export default function RefundPolicy() {
           </h1>
           <div className="w-20 h-1.5 bg-gradient-to-r from-[#FFC700] to-[#FFD700] rounded-full mb-8"></div>
 
-          <div className="prose max-w-none space-y-8 text-gray-700">
+          <div className="prose max-w-none space-y-8 text-gray-700 text-sm md:text-base">
             <p className="text-sm text-gray-500">Last Updated: October 14, 2025</p>
             
             <p>Thank you for purchasing the "0 to 50K YouTube Blueprint." We are confident it provides the tools and strategies to help you succeed on your YouTube journey.</p>

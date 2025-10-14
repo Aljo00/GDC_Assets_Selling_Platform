@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
           </h1>
           <div className="w-20 h-1.5 bg-gradient-to-r from-[#FFC700] to-[#FFD700] rounded-full mb-8"></div>
 
-          <div className="prose max-w-none space-y-8 text-gray-700">
+          <div className="prose max-w-none space-y-8 text-gray-700 text-sm md:text-base">
             <p className="text-sm text-gray-500">Last Updated: October 14, 2025</p>
             
             <p>Your privacy is a top priority for us at GOM Digital Consultancy. This policy outlines how we collect, use, and safeguard your personal information when you purchase our "0 to 50K YouTube Blueprint."</p>
