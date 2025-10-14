@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import RefundPolicy from './pages/RefundPolicy';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsConditions from './pages/TermsConditions';
+import { Analytics } from "@vercel/analytics/react";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -17,5 +18,6 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/terms-conditions" element={<TermsConditions />} />
       </Routes>
     </BrowserRouter>
+    <Analytics />
   </StrictMode>
 );
