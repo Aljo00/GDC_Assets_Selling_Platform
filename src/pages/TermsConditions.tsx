@@ -24,7 +24,7 @@ export default function TermsConditions() {
           </h1>
           <div className="w-20 h-1.5 bg-gradient-to-r from-[#FFC700] to-[#FFD700] rounded-full mb-8"></div>
 
-          <div className="prose prose-lg max-w-none space-y-8 text-gray-700">
+          <div className="prose max-w-none space-y-8 text-gray-700">
             <p className="text-sm text-gray-500">Last Updated: October 14, 2025</p>
 
             <section>
@@ -113,7 +113,8 @@ export default function TermsConditions() {
 
             <section>
                 <h2 className="text-2xl font-bold text-[#1E1E1E] mt-8 mb-4">10. Contact Information</h2>
-                <p>For any questions or concerns regarding these Terms and Conditions, please contact us at: <a href="mailto:your-professional-email@gmail.com" className="text-[#FFC700] font-bold">your-professional-email@gmail.com</a>.</p>
+                <p>This website is handled by Amal Gopal, CEO of GOM Digital Consultancy (amal@gomdigitalconsultancy.com).</p>
+                <p>For any questions or concerns regarding these Terms and Conditions, please contact us at: <a href="mailto:info@gomdigitalconsultancy.com" className="text-[#FFC700] font-bold">info@gomdigitalconsultancy.com</a>.</p>
             </section>
 
           </div>

@@ -24,7 +24,7 @@ export default function RefundPolicy() {
           </h1>
           <div className="w-20 h-1.5 bg-gradient-to-r from-[#FFC700] to-[#FFD700] rounded-full mb-8"></div>
 
-          <div className="prose prose-lg max-w-none space-y-8 text-gray-700">
+          <div className="prose max-w-none space-y-8 text-gray-700">
             <p className="text-sm text-gray-500">Last Updated: October 14, 2025</p>
             
             <p>Thank you for purchasing the "0 to 50K YouTube Blueprint." We are confident it provides the tools and strategies to help you succeed on your YouTube journey.</p>
@@ -71,7 +71,7 @@ export default function RefundPolicy() {
                             <p className="font-semibold text-gray-800">
                                 If you have any questions about the blueprint <strong>before</strong> you buy, please feel free to contact us. We are happy to provide more details to help you make an informed decision.
                             </p>
-                            <p className="mt-2"><strong>Email:</strong> <a href="mailto:[your-professional-email@gomdigitalconsultancy.com]" className="text-[#FFC700] font-bold">[your-professional-email@gomdigitalconsultancy.com]</a></p>
+                            <p className="mt-2"><strong>Email:</strong> <a href="mailto:info@gomdigitalconsultancy.com" className="text-[#FFC700] font-bold">info@gomdigitalconsultancy.com</a></p>
                         </div>
                     </div>
                 </div>
