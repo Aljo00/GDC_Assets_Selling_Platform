@@ -71,27 +71,27 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-auto transform transition-transform duration-300 scale-100">
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300 font-sans">
+      <div className="bg-gradient-to-br from-[#1E1E1E] via-[#2A2A2A] to-[#1E1E1E] text-white rounded-2xl shadow-2xl w-full max-w-lg mx-auto border border-white/20 transform transition-transform duration-300 scale-100">
         <div className="p-6 sm:p-8 relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors"
+            className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
           >
             <X size={24} />
           </button>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            Checkout
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent mb-2">
+            Secure Checkout
           </h2>
-          <p className="text-gray-600 mb-6 sm:mb-8">
-            Please provide your details to proceed.
+          <p className="text-gray-400 mb-6 sm:mb-8">
+            Enter your details to get instant access.
           </p>
 
           <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Full Name
               </label>
@@ -102,21 +102,22 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 value={formData.name}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                placeholder='e.g. Amal Gopal'
+                className={`w-full px-4 py-2 bg-white/5 border rounded-lg focus:outline-none focus:ring-2 text-white placeholder-gray-500 ${
                   errors.name
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-blue-500"
+                    : "border-white/20 focus:ring-yellow-400"
                 }`}
               />
               {errors.name && (
-                <p className="text-red-600 text-xs mt-1">{errors.name}</p>
+                <p className="text-red-500 text-xs mt-1">{errors.name}</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Email Address
               </label>
@@ -127,21 +128,22 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 value={formData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                placeholder='you@example.com'
+                className={`w-full px-4 py-2 bg-white/5 border rounded-lg focus:outline-none focus:ring-2 text-white placeholder-gray-500 ${
                   errors.email
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-blue-500"
+                    : "border-white/20 focus:ring-yellow-400"
                 }`}
               />
               {errors.email && (
-                <p className="text-red-600 text-xs mt-1">{errors.email}</p>
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="phone"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Phone Number
               </label>
@@ -152,21 +154,22 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 value={formData.phone}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                placeholder='10-digit mobile number'
+                className={`w-full px-4 py-2 bg-white/5 border rounded-lg focus:outline-none focus:ring-2 text-white placeholder-gray-500 ${
                   errors.phone
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-blue-500"
+                    : "border-white/20 focus:ring-yellow-400"
                 }`}
               />
               {errors.phone && (
-                <p className="text-red-600 text-xs mt-1">{errors.phone}</p>
+                <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="address"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Address
               </label>
@@ -177,14 +180,15 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 value={formData.address}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                placeholder='Your full address'
+                className={`w-full px-4 py-2 bg-white/5 border rounded-lg focus:outline-none focus:ring-2 text-white placeholder-gray-500 ${
                   errors.address
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-blue-500"
+                    : "border-white/20 focus:ring-yellow-400"
                 }`}
               />
               {errors.address && (
-                <p className="text-red-600 text-xs mt-1">{errors.address}</p>
+                <p className="text-red-500 text-xs mt-1">{errors.address}</p>
               )}
             </div>
 
@@ -194,14 +198,14 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 id="agree"
                 checked={agreed}
                 onChange={(e) => setAgreed(e.target.checked)}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1"
+                className="h-4 w-4 text-yellow-400 bg-gray-700 border-gray-600 rounded focus:ring-yellow-500 mt-1 cursor-pointer"
               />
-              <label htmlFor="agree" className="ml-2 text-xs text-gray-600">
+              <label htmlFor="agree" className="ml-3 text-xs text-gray-400">
                 I have read and agree to the
                 <Link
                   to="/terms-conditions"
                   target="_blank"
-                  className="font-medium text-blue-600 hover:underline"
+                  className="font-medium text-yellow-400 hover:underline ml-1"
                 >
                   Terms and Conditions
                 </Link>
@@ -209,7 +213,7 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 <Link
                   to="/privacy-policy"
                   target="_blank"
-                  className="font-medium text-blue-600 hover:underline"
+                  className="font-medium text-yellow-400 hover:underline ml-1"
                 >
                   Privacy Policy
                 </Link>
@@ -217,7 +221,7 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 <Link
                   to="/refund-policy"
                   target="_blank"
-                  className="font-medium text-blue-600 hover:underline"
+                  className="font-medium text-yellow-400 hover:underline ml-1"
                 >
                   Refund Policy
                 </Link>
@@ -229,12 +233,12 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
               type="button"
               onClick={handleSubmit}
               disabled={!isFormValid}
-              className="w-full flex items-center justify-center gap-3 bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-[#FFC700] to-[#FFD700] text-[#1E1E1E] font-bold py-3 px-4 rounded-full text-lg hover:shadow-2xl hover:shadow-yellow-500/50 transition-all duration-300 transform hover:scale-105 disabled:bg-gray-600 disabled:from-gray-600 disabled:to-gray-700 disabled:shadow-none disabled:text-gray-400 disabled:cursor-not-allowed disabled:transform-none"
             >
               <img
                 src={cashfree_logo}
                 alt="Cashfree"
-                className="h-5 w-auto invert"
+                className="h-6 w-auto"
               />
               <span>Proceed to Secure Payment</span>
             </button>

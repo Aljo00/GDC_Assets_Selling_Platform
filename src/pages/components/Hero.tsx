@@ -55,12 +55,12 @@ const Hero = ({ scrollToPricing }: HeroProps) => {
                                   className="w-28 h-28 rounded-full object-cover border-4 border-[#FFC700] shadow-lg mb-4"
                               />
                               <h3 className="text-2xl font-bold text-white">Amal Gopal</h3>
-                              <p className="text-base text-gray-400">CEO, GOM Digital</p>
+                              <p className="text-base text-gray-400">CEO, GOM Digital Consultancy</p>
                           </div>
 
                           <div className="grid grid-cols-3 gap-4 text-center">
                               <div>
-                                  <p className="text-3xl font-bold text-[#FFC700]">50K+</p>
+                                  <p className="text-3xl font-bold text-[#FFC700]">1.2M+</p>
                                   <p className="text-sm text-gray-400">Subscribers</p>
                               </div>
                               <div>
@@ -68,7 +68,7 @@ const Hero = ({ scrollToPricing }: HeroProps) => {
                                   <p className="text-sm text-gray-400">Week Roadmap</p>
                               </div>
                               <div>
-                                  <p className="text-3xl font-bold text-[#FFC700]">100</p>
+                                  <p className="text-3xl font-bold text-[#FFC700]">87</p>
                                   <p className="text-sm text-gray-400">Copies Left</p>
                               </div>
                           </div>

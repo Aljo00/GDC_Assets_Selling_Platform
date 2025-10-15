@@ -38,6 +38,7 @@ export default function PrivacyPolicy() {
                     <li><strong>Full Name</strong></li>
                     <li><strong>Email Address</strong></li>
                     <li><strong>Phone Number</strong></li>
+                    <li><strong>Address</strong></li>
                 </ul>
               </div>
             </section>
