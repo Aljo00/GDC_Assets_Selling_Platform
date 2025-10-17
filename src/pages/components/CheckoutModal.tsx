@@ -1,20 +1,29 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { X } from 'lucide-react';
-import cashfree_logo from "../../assets/cashfree_logo.png"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { X } from "lucide-react";
+import cashfree_logo from "../../assets/cashfree_logo.png";
 
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onProceedToPayment: (data: { name: string; email: string; phone: string; address: string; }) => void;
+  onProceedToPayment: (data: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+  }) => void;
 }
 
-const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalProps) => {
+const CheckoutModal = ({
+  isOpen,
+  onClose,
+  onProceedToPayment,
+}: CheckoutModalProps) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -22,19 +31,21 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
   const [isFormValid, setIsFormValid] = useState(false);
 
   const validateField = (name: string, value: string) => {
-    let error = '';
+    let error = "";
     switch (name) {
-      case 'name':
-        if (value.length < 2) error = 'Please enter your full name.';
+      case "name":
+        if (value.length < 2) error = "Please enter your full name.";
         break;
-      case 'email':
-        if (!/\S+@\S+\.\S+/.test(value)) error = 'Please enter a valid email address.';
+      case "email":
+        if (!/\S+@\S+\.\S+/.test(value))
+          error = "Please enter a valid email address.";
         break;
-      case 'phone':
-        if (!/^\d{10}$/.test(value)) error = 'Please enter a valid 10-digit phone number.';
+      case "phone":
+        if (!/^\d{10}$/.test(value))
+          error = "Please enter a valid 10-digit phone number.";
         break;
-      case 'address':
-        if (value.length < 10) error = 'Please enter a complete address.';
+      case "address":
+        if (value.length < 10) error = "Please enter a complete address.";
         break;
       default:
         break;
@@ -43,22 +54,24 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
   };
 
   useEffect(() => {
-    const hasErrors = Object.values(errors).some(error => error !== '');
-    const allFieldsFilled = Object.values(formData).every(value => value !== '');
+    const hasErrors = Object.values(errors).some((error) => error !== "");
+    const allFieldsFilled = Object.values(formData).every(
+      (value) => value !== ""
+    );
     setIsFormValid(!hasErrors && allFieldsFilled && agreed);
   }, [formData, errors, agreed]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     const error = validateField(name, value);
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const error = validateField(name, value);
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   if (!isOpen) return null;
@@ -102,7 +115,7 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 value={formData.name}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder='e.g. Amal Gopal'
+                placeholder="e.g. Amal Gopal"
                 className={`w-full px-4 py-2 bg-white/5 border rounded-lg focus:outline-none focus:ring-2 text-white placeholder-gray-500 ${
                   errors.name
                     ? "border-red-500 focus:ring-red-500"
@@ -128,7 +141,7 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 value={formData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder='you@example.com'
+                placeholder="you@example.com"
                 className={`w-full px-4 py-2 bg-white/5 border rounded-lg focus:outline-none focus:ring-2 text-white placeholder-gray-500 ${
                   errors.email
                     ? "border-red-500 focus:ring-red-500"
@@ -154,7 +167,7 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 value={formData.phone}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder='10-digit mobile number'
+                placeholder="10-digit mobile number"
                 className={`w-full px-4 py-2 bg-white/5 border rounded-lg focus:outline-none focus:ring-2 text-white placeholder-gray-500 ${
                   errors.phone
                     ? "border-red-500 focus:ring-red-500"
@@ -180,7 +193,7 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
                 value={formData.address}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder='Your full address'
+                placeholder="Your full address"
                 className={`w-full px-4 py-2 bg-white/5 border rounded-lg focus:outline-none focus:ring-2 text-white placeholder-gray-500 ${
                   errors.address
                     ? "border-red-500 focus:ring-red-500"
@@ -235,11 +248,7 @@ const CheckoutModal = ({ isOpen, onClose, onProceedToPayment }: CheckoutModalPro
               disabled={!isFormValid}
               className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-[#FFC700] to-[#FFD700] text-[#1E1E1E] font-bold py-3 px-4 rounded-full text-lg hover:shadow-2xl hover:shadow-yellow-500/50 transition-all duration-300 transform hover:scale-105 disabled:bg-gray-600 disabled:from-gray-600 disabled:to-gray-700 disabled:shadow-none disabled:text-gray-400 disabled:cursor-not-allowed disabled:transform-none"
             >
-              <img
-                src={cashfree_logo}
-                alt="Cashfree"
-                className="h-6 w-auto"
-              />
+              <img src={cashfree_logo} alt="Cashfree" className="h-6 w-auto" />
               <span>Proceed to Secure Payment</span>
             </button>
           </form>

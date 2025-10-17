@@ -1,12 +1,11 @@
-import { PlayCircle, Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { PlayCircle, Check } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface FooterProps {
   scrollToPricing: () => void;
 }
 
 const Footer = ({ scrollToPricing }: FooterProps) => {
-
   return (
     <footer className="relative bg-gradient-to-br from-[#1E1E1E] via-black to-[#1E1E1E] text-white py-12 sm:py-16 px-4 sm:px-6 overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-5"></div>
@@ -44,14 +43,16 @@ const Footer = ({ scrollToPricing }: FooterProps) => {
                 <a
                   href="https://www.gomdigitalconsultancy.com/about"
                   className="block text-left text-gray-400 hover:text-[#FFC700] transition-colors text-sm sm:text-base"
-                  target="_blank" rel="noopener noreferrer"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   About us
                 </a>
                 <a
                   href="https://www.gomdigitalconsultancy.com/contact-us"
                   className="block text-left text-gray-400 hover:text-[#FFC700] transition-colors text-sm sm:text-base"
-                  target="_blank" rel="noopener noreferrer"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Contact Us
                 </a>
