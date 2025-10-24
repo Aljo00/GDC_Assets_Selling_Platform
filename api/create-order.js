@@ -1,13 +1,12 @@
 // File: api/create-order.js
 
-// 1. Import using require or ES module syntax
-const { Cashfree } = require("cashfree-pg");
-const { CFEnvironment } = require("cashfree-pg/dist/utils/cf-environment"); // Correct import
-const { createClient } = require("@supabase/supabase-js");
+// --- FIX: Use 'import' instead of 'require' ---
+import { Cashfree } from "cashfree-pg";
+import { CFEnvironment } from "cashfree-pg/dist/utils/cf-environment";
+import { createClient } from "@supabase/supabase-js";
+// Note: We don't import VercelRequest/Response types in JS
 
-// --- VALIDATION ---
-// You MUST add VITE_BASE_URL to Vercel Environment Variables
-// Value: https://assets.gomdigitalconsultancy.com
+// --- Validation (ensure VITE_BASE_URL is set in Vercel) ---
 if (
   !process.env.CASHFREE_APP_ID ||
   !process.env.CASHFREE_SECRET_KEY ||
@@ -28,7 +27,6 @@ if (
     .join(", ");
 
   console.error(`Missing required environment variables: ${missing}`);
-  // In a real app, you might want to return a 500 error here instead of throwing
   throw new Error(`Missing required environment variables: ${missing}`);
 }
 
@@ -46,23 +44,23 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-// --- Vercel Handler Function ---
-// Use 'module.exports' for CommonJS style, or 'export default' if your package.json has "type": "module"
-module.exports = async (req, res) => {
+// --- FIX: Use 'export default' for ES Modules ---
+export default async function handler(req, res) {
   // Check method
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
+    // Note: Vercel types aren't available, but we can still set status/json
+    res.status(405).json({ error: "Method Not Allowed" });
+    return;
   }
 
   try {
     const { name, email, phone, address } = req.body;
 
-    // Basic validation for required fields
     if (!name || !email || !phone || !address) {
-      return res.status(400).json({ error: "Missing required fields" });
+      res.status(400).json({ error: "Missing required fields" });
+      return;
     }
 
-    // Sanitize phone number
     const sanitizedPhone = phone.replace(/[^0-9]/g, "").slice(-10);
     const amount = 1499;
     const orderId = `GDC_ORDER_${Date.now()}`;
@@ -84,17 +82,16 @@ module.exports = async (req, res) => {
 
     if (supabaseError) {
       console.error("Supabase error:", supabaseError.message);
-      return res.status(500).json({ error: "Failed to create order record" });
+      res.status(500).json({ error: "Failed to create order record" });
+      return;
     }
 
-    // Double-check if the insert returned data
     if (!orderRecord) {
       console.error(
         "Supabase error: Failed to retrieve order record after insert"
       );
-      return res
-        .status(500)
-        .json({ error: "Failed to create order record properly" });
+      res.status(500).json({ error: "Failed to create order record properly" });
+      return;
     }
 
     // === "TRANSFER" STEP ===
@@ -118,22 +115,19 @@ module.exports = async (req, res) => {
     const response = await cashfree.pg.orders.create(orderRequest);
     const orderData = response.data;
 
-    // Check if Cashfree accepted the order
     if (orderData.order_status !== "ACTIVE") {
       console.error("Cashfree returned a non-active order:", orderData);
-      throw new Error("Cashfree order creation failed");
+      throw new Error("Cashfree order creation failed"); // This will be caught below
     }
 
     // === "PROCEED" STEP ===
-    // Send session ID back to the frontend
     res.status(200).json({ payment_session_id: orderData.payment_session_id });
   } catch (error) {
-    // Log the actual error details
     const errorDetails = error.response?.data || error.message || error;
     console.error("Handler error:", errorDetails);
     res.status(500).json({
       error: "Cashfree API error or internal server error",
-      details: errorDetails, // Send details back for debugging (maybe remove in production)
+      details: errorDetails,
     });
   }
-};
+}
