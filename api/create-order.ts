@@ -5,15 +5,39 @@ import { Cashfree, CFEnvironment as Environment } from "cashfree-pg";
 import { createClient } from "@supabase/supabase-js";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-// 2. Initialize the Cashfree client by creating a NEW INSTANCE
-// This is the main fix.
+// Helper to create Cashfree instance at request-time and validate shape
 // Note: constructor expects (environment, appId, secretKey, apiVersion)
-const cashfree = new Cashfree(
-  Environment.SANDBOX, // Use the imported Environment enum (CFEnvironment)
-  process.env.CASHFREE_APP_ID!,
-  process.env.CASHFREE_SECRET_KEY!,
-  process.env.CASHFREE_API_VERSION!,
-);
+function createCashfreeClient() {
+  const appId = process.env.CASHFREE_APP_ID;
+  const secret = process.env.CASHFREE_SECRET_KEY;
+  const apiVersion = process.env.CASHFREE_API_VERSION;
+
+  console.log("Cashfree env vars present:", {
+    CASHFREE_APP_ID: !!appId,
+    CASHFREE_SECRET_KEY: !!secret,
+    CASHFREE_API_VERSION: !!apiVersion,
+  });
+
+  if (!appId || !secret) {
+    console.error(
+      "Missing Cashfree credentials. Ensure CASHFREE_APP_ID and CASHFREE_SECRET_KEY are set."
+    );
+    return null;
+  }
+
+  try {
+    const cf = new Cashfree(Environment.SANDBOX, appId, secret, apiVersion);
+    // Log a lightweight shape check (do NOT log secrets)
+    console.log(
+      "Created Cashfree client. Has 'pg' property:",
+      !!(cf as any).pg
+    );
+    return cf;
+  } catch (err) {
+    console.error("Error constructing Cashfree client:", err);
+    return null;
+  }
+}
 
 // Init Supabase with the secure SERVICE KEY
 const supabase = createClient(
@@ -71,9 +95,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       order_note: "0 to 50K YouTube Blueprint",
     };
 
-    // 3. Use the 'cashfree' (lowercase) instance to call the API
-    //    and use 'pg.orders.create' (lowercase)
-    const response = await (cashfree as any).pg.orders.create(orderRequest);
+    // 3. Create and validate the Cashfree server client and call the API
+    const cashfree = createCashfreeClient();
+    if (!cashfree) {
+      console.error("Cashfree client not initialized (null)");
+      return res
+        .status(500)
+        .json({ error: "Cashfree client not initialized on server" });
+    }
+
+    // Try multiple common shapes for the 'orders' API so we can support different library versions
+    const ordersApi =
+      (cashfree as any).pg?.orders ||
+      (cashfree as any).orders ||
+      (cashfree as any).ordersApi;
+    if (!ordersApi || typeof ordersApi.create !== "function") {
+      // Log a helpful diagnostic for server logs
+      try {
+        console.error(
+          "Cashfree client shape (no orders API):",
+          Object.keys(cashfree)
+        );
+      } catch (e) {
+        console.error("Failed to inspect cashfree instance shape", e);
+      }
+      return res
+        .status(500)
+        .json({ error: "Cashfree client missing orders API (pg.orders)" });
+    }
+
+    const response = await ordersApi.create(orderRequest);
     const orderData = response.data;
 
     if (orderData.order_status !== "ACTIVE") {
