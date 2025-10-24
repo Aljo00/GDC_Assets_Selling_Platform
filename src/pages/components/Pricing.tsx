@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import CheckoutModal from "./CheckoutModal";
+// Add this line at the top of src/pages/components/Pricing.tsx
+import { useCashfree } from '../../hooks/useCashfree';
 
 const Pricing = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
