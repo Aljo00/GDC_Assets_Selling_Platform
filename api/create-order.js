@@ -1,8 +1,7 @@
 // File: api/create-order.js
 
 // --- FIX: Use 'import' instead of 'require' ---
-import { Cashfree } from "cashfree-pg";
-import { CFEnvironment } from "cashfree-pg/dist/utils/cf-environment";
+import { Cashfree, CFEnvironment } from "cashfree-pg";
 import { createClient } from "@supabase/supabase-js";
 // Note: We don't import VercelRequest/Response types in JS
 
