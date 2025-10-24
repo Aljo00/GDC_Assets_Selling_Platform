@@ -116,45 +116,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .json({ error: "Cashfree client not initialized on server" });
     }
 
-    // Try v5 static method first, then fall back to v4 style with API version
+    // Try creating order using the cashfree instance directly
     let response;
-    let error;
 
     try {
-      // First try v5 style (static PGCreateOrder)
-      console.log("Attempting v5 order creation...");
-      response = await (Cashfree as any).PGCreateOrder(orderRequest);
-    } catch (err: any) {
-      console.log("v5 order creation failed, trying v4 style...");
-      error = err;
+      console.log("Attempting order creation via instance...");
 
-      try {
-        // Fall back to v4 style (with API version)
-        response = await (Cashfree as any).PGCreateOrder(
-          process.env.CASHFREE_API_VERSION || "2023-08-01",
-          orderRequest
-        );
-        // If this succeeds, clear the error
-        error = null;
-      } catch (err2: any) {
-        error = err2;
+      // Let's see what methods are available on the instance
+      console.log("Available methods on Cashfree instance:", {
+        hasCreateOrder: typeof (cashfree as any).createOrder === "function",
+        hasOrders: typeof (cashfree as any).orders === "object",
+        properties: Object.keys(cashfree || {}),
+      });
+
+      // First try direct createOrder method
+      if (typeof (cashfree as any).createOrder === "function") {
+        response = await (cashfree as any).createOrder(orderRequest);
       }
-    }
-
-    // If both attempts failed, return detailed error
-    if (error) {
+      // Then try orders.create
+      else if ((cashfree as any).orders?.create) {
+        response = await (cashfree as any).orders.create(orderRequest);
+      }
+      // Finally try order API
+      else if ((cashfree as any).order) {
+        const method = (cashfree as any).order;
+        if (typeof method === "function") {
+          response = await method(orderRequest);
+        } else if (method.create) {
+          response = await method.create(orderRequest);
+        }
+      } else {
+        throw new Error(
+          "No order creation method found on Cashfree instance. Available methods: " +
+            Object.keys(cashfree || {}).join(", ")
+        );
+      }
+    } catch (err: any) {
       // Log full error details for debugging
       console.error("Cashfree order creation failed:", {
-        message: error.message,
-        response: error.response?.data,
-        code: error.code,
-        stack: error.stack,
+        message: err.message,
+        response: err.response?.data,
+        code: err.code,
+        stack: err.stack,
+        availableMethods: Object.keys(cashfree || {}),
       });
 
       // Return a safe error message to the client
       return res.status(500).json({
         error: "Cashfree order creation failed",
-        details: error.response?.data?.message || error.message,
+        details: err.response?.data?.message || err.message,
       });
     }
 
