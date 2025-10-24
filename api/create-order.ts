@@ -104,31 +104,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .json({ error: "Cashfree client not initialized on server" });
     }
 
-    // Try multiple common shapes for the 'orders' API so we can support different library versions
-    const ordersApi =
-      (cashfree as any).pg?.orders ||
-      (cashfree as any).orders ||
-      (cashfree as any).ordersApi;
-    if (!ordersApi || typeof ordersApi.create !== "function") {
-      // Log a helpful diagnostic for server logs
-      try {
-        console.error(
-          "Cashfree client shape (no orders API):",
-          Object.keys(cashfree)
-        );
-      } catch (e) {
-        console.error("Failed to inspect cashfree instance shape", e);
-      }
-      return res
-        .status(500)
-        .json({ error: "Cashfree client missing orders API (pg.orders)" });
+    // For cashfree-pg v5 the SDK exposes static helper methods like `Cashfree.PGCreateOrder`
+    // The README shows usage:
+    //   const cf = new Cashfree(Cashfree.SANDBOX, clientId, clientSecret)
+    //   Cashfree.PGCreateOrder(request)
+    // So after constructing the instance above, call the static method.
+    let response;
+    try {
+      response = await (Cashfree as any).PGCreateOrder(orderRequest);
+    } catch (err: any) {
+      console.error(
+        "Cashfree PGCreateOrder error:",
+        err.response?.data || err.message || err
+      );
+      return res.status(500).json({ error: "Cashfree order creation failed" });
     }
 
-    const response = await ordersApi.create(orderRequest);
-    const orderData = response.data;
+    const orderData = response?.data;
 
-    if (orderData.order_status !== "ACTIVE") {
-      throw new Error("Cashfree order creation failed");
+    // Some SDK responses may return order_status or status; account for both
+    const status = orderData?.order_status || orderData?.status;
+    if (status !== "ACTIVE" && status !== "CREATED") {
+      console.error(
+        "Unexpected order status from Cashfree:",
+        status,
+        orderData
+      );
+      return res.status(500).json({ error: "Cashfree order creation failed" });
     }
 
     // === "PROCEED" STEP (Part 1) ===
