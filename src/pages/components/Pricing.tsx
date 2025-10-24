@@ -4,15 +4,61 @@ import CheckoutModal from "./CheckoutModal";
 
 const Pricing = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaying, setIsPaying] = useState(false); // To show loading state
+  const cashfree = useCashfree(); // Get the loaded Cashfree SDK
 
-  const handleProceedToPayment = (userData: {
+  // This function is triggered BY CheckoutModal.tsx
+  const handleProceedToPayment = async (userData: {
     name: string;
     email: string;
     phone: string;
     address: string;
   }) => {
-    console.log("Proceeding to payment with data:", userData);
-    // Here you would typically initiate the Cashfree payment process
+    if (!cashfree || isPaying) return; // Don't run if SDK isn't loaded or already paying
+
+    setIsPaying(true);
+    setIsModalOpen(false); // Close the modal, payment is starting
+
+    try {
+      // 1. Call your Vercel Function (which does "store" and "transfer")
+      const response = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        throw new Error(data.error || "Failed to create payment.");
+      }
+
+      const { payment_session_id } = data;
+
+      // 2. === YOUR "PROCEED" STEP (Part 2) ===
+      // Launch the Cashfree popup
+      const dropPayment = await cashfree.pay({
+        paymentSessionId: payment_session_id,
+        redirectTarget: "_self", // Or '_blank' to open in new tab
+      });
+
+      // 3. Handle the response
+      const paymentResponse = dropPayment.data;
+      if (paymentResponse.order && paymentResponse.order.status === "PAID") {
+        // Payment is successful!
+        // Redirect to a success page.
+        // You would also need a page to verify this on the backend
+        window.location.href = `/payment-status?order_id=${paymentResponse.order.order_id}`;
+      } else {
+        // Payment failed or was cancelled
+        alert("Payment failed or was cancelled. Please try again.");
+        setIsPaying(false);
+      }
+    } catch (error: any) {
+      console.error("Payment Error:", error);
+      alert(`An error occurred: ${error.message}`);
+      setIsPaying(false);
+    }
   };
 
   return (
@@ -80,10 +126,15 @@ const Pricing = () => {
 
               <button
                 onClick={() => setIsModalOpen(true)}
+                disabled={isPaying || !cashfree} // Disable if paying or SDK not loaded
                 className="group relative bg-gradient-to-r from-[#FFC700] to-[#FFD700] text-[#1E1E1E] px-8 sm:px-12 lg:px-16 py-4 sm:py-6 rounded-full text-base sm:text-lg lg:text-2xl font-black hover:shadow-2xl hover:shadow-yellow-500/50 transition-all duration-300 transform hover:scale-105 w-full sm:w-auto"
               >
                 <span className="relative z-10">
-                  BUY THE 0-50K YOUTUBE BLUEPRINT (₹1,499)
+                  {isPaying
+                    ? "Processing..."
+                    : !cashfree
+                    ? "Loading Gateway..."
+                    : "BUY THE 0-50K YOUTUBE BLUEPRINT (₹1,499)"}
                 </span>
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-300 opacity-0 group-hover:opacity-100 transition-opacity blur"></div>
               </button>
