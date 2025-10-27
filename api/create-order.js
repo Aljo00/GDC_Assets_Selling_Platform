@@ -51,7 +51,7 @@ export default async function handler(req, res) {
       environment: CFEnvironment.SANDBOX, // Using imported Enum
       clientId: process.env.CASHFREE_APP_ID,
       clientSecret: process.env.CASHFREE_SECRET_KEY,
-      apiVersion: process.env.CASHFREE_API_VERSION,
+      // apiVersion: process.env.CASHFREE_API_VERSION,
     });
     // Explicitly check for pg.orders immediately
     if (
