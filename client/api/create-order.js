@@ -19,6 +19,7 @@ export default async function handler(req, res) {
     environment: CFEnvironment.SANDBOX, // Use CFEnvironment.PRODUCTION for production
     appId: process.env.CASHFREE_APP_ID,
     secretKey: process.env.CASHFREE_SECRET_KEY,
+    apiVersion: "2025-01-01",
   });
 
   // Generate a unique order ID for the transaction
