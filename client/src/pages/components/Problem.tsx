@@ -1,7 +1,7 @@
 import { TrendingUp, Target, PlayCircle, Award } from 'lucide-react';
 
 const Problem = () => {
-  return (
+  return ( 
     <section className="relative min-h-screen flex items-center justify-center py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-white via-gray-50 to-white">
       <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/4050315/pexels-photo-4050315.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-[0.03]"></div>
 
