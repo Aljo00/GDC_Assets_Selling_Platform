@@ -3,12 +3,6 @@ import { Cashfree, CFEnvironment } from "cashfree-pg";
 
 // This is a Vercel Serverless Function
 export default async function handler(req, res) {
-  // --- DEBUGGING START ---
-  console.log("Attempting to create order...");
-  console.log("CASHFREE_APP_ID loaded:", process.env.CASHFREE_APP_ID ? "Yes" : "No");
-  console.log("CASHFREE_SECRET_KEY loaded:", process.env.CASHFREE_SECRET_KEY ? "Yes" : "No");
-  // --- DEBUGGING END ---
-
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).end("Method Not Allowed");
@@ -49,8 +43,8 @@ export default async function handler(req, res) {
   };
 
   try {
-    // Following the exact code line provided by the user
-    const response = await cashfree.PGCreateOrder(request);
+    // Using the correct SDK function for version 5
+    const response = await cashfree.orders.createOrder(request);
     
     // Send the successful response data (including payment_session_id) to the frontend
     res.status(200).json(response.data);
