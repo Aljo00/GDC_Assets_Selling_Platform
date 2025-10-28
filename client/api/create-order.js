@@ -56,7 +56,7 @@ export default async function handler(req, res) {
     res.status(200).json(response.data);
 
   } catch (error) {
-    console.error("Cashfree order creation error:", error.response ? error.response.data.message : error.message);
-    res.status(500).json({ error: error.response ? error.response.data.message : "Failed to create order." });
+    console.error("Full Cashfree error response:", error.response ? error.response.data : error.message);
+    res.status(500).json({ error: (error.response && error.response.data) ? error.response.data.message : "Failed to create order." });
   }
 }
