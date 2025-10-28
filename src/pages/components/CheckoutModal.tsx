@@ -1,4 +1,16 @@
 import { useState, useEffect } from "react";
+
+// Extend window type for Cashfree SDK
+declare global {
+  interface Window {
+    Cashfree?: (opts: { mode: string }) => {
+      checkout: (opts: {
+        paymentSessionId: string;
+        redirectTarget: string;
+      }) => void;
+    };
+  }
+}
 import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 import cashfree_logo from "../../assets/cashfree_logo.png";
@@ -6,19 +18,9 @@ import cashfree_logo from "../../assets/cashfree_logo.png";
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onProceedToPayment: (data: {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-  }) => void;
 }
 
-const CheckoutModal = ({
-  isOpen,
-  onClose,
-  onProceedToPayment,
-}: CheckoutModalProps) => {
+const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -76,10 +78,52 @@ const CheckoutModal = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = () => {
-    if (isFormValid) {
-      onProceedToPayment(formData);
+  // Load Cashfree JS SDK
+  useEffect(() => {
+    if (typeof window !== "undefined" && !window.Cashfree) {
+      const script = document.createElement("script");
+      script.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!isFormValid) return;
+    try {
+      // Call backend to create order
+      const res = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Order creation failed");
+      const paymentSessionId = data.paymentSessionId;
+      if (!paymentSessionId) throw new Error("No payment session id returned");
+
+      // Wait for Cashfree SDK to be loaded
+      const waitForCashfree = () =>
+        new Promise<typeof window.Cashfree>((resolve) => {
+          if (window.Cashfree) return resolve(window.Cashfree);
+          const interval = setInterval(() => {
+            if (window.Cashfree) {
+              clearInterval(interval);
+              resolve(window.Cashfree!);
+            }
+          }, 100);
+        });
+      const Cashfree = await waitForCashfree();
+      if (!Cashfree) {
+        alert("Cashfree SDK failed to load. Please try again later.");
+        return;
+      }
+      const cashfree = Cashfree({ mode: "sandbox" });
+      cashfree.checkout({ paymentSessionId, redirectTarget: "_self" });
       onClose();
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      alert("Payment initiation failed: " + errorMsg);
     }
   };
 
@@ -90,6 +134,8 @@ const CheckoutModal = ({
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+            title="Close checkout modal"
+            aria-label="Close checkout modal"
           >
             <X size={24} />
           </button>
