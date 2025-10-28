@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import CheckoutModal from "./CheckoutModal";
 
-const Pricing = () => {
+const Pricing = () => { 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleProceedToPayment = (userData: {
