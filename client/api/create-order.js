@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   // Reverting to the older constructor syntax as per the user's sample code
   const cashfree = new Cashfree(
-    CFEnvironment.SANDBOX, 
+    CFEnvironment.PRODUCTION, 
     process.env.CASHFREE_APP_ID, 
     process.env.CASHFREE_SECRET_KEY
   );
