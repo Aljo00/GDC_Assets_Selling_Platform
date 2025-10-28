@@ -3,6 +3,12 @@ import { Cashfree, CFEnvironment } from "cashfree-pg";
 
 // This is a Vercel Serverless Function
 export default async function handler(req, res) {
+  // --- DEBUGGING START ---
+  console.log("Attempting to create order...");
+  console.log("CASHFREE_APP_ID loaded:", process.env.CASHFREE_APP_ID ? "Yes" : "No");
+  console.log("CASHFREE_SECRET_KEY loaded:", process.env.CASHFREE_SECRET_KEY ? "Yes" : "No");
+  // --- DEBUGGING END ---
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).end("Method Not Allowed");
