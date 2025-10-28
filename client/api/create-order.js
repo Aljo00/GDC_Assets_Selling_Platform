@@ -14,13 +14,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing required body parameters: amount and customer." });
   }
 
-  // Initialize Cashfree with credentials from Vercel Environment Variables
-  const cashfree = new Cashfree({
-    environment: CFEnvironment.SANDBOX, // Use CFEnvironment.PRODUCTION for production
-    appId: process.env.CASHFREE_APP_ID,
-    secretKey: process.env.CASHFREE_SECRET_KEY,
-    apiVersion: "2025-01-01",
-  });
+  // Reverting to the older constructor syntax as per the user's sample code
+  const cashfree = new Cashfree(
+    CFEnvironment.SANDBOX, 
+    process.env.CASHFREE_APP_ID, 
+    process.env.CASHFREE_SECRET_KEY
+  );
 
   // Generate a unique order ID for the transaction
   const orderId = `GDC-YT-BLUEPRINT-${Date.now()}`;
