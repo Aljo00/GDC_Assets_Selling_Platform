@@ -43,8 +43,8 @@ export default async function handler(req, res) {
   };
 
   try {
-    // Using the correct SDK function for version 5
-    const response = await cashfree.orders.createOrder(request);
+    // Reverting to the function call that worked on Vercel.
+    const response = await cashfree.PGCreateOrder(request);
     
     // Send the successful response data (including payment_session_id) to the frontend
     res.status(200).json(response.data);
