@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     order_meta: {
       // This URL will be used to redirect the user after payment
       // IMPORTANT: Replace this with your actual production return URL
-      return_url: `https://gomyoutube.netlify.app/return?order_id={order_id}`,
+      return_url: `https://www.cashfree.com/devstudio/preview/pg/web/checkout?order_id={order_id}`,
     },
   };
 
