@@ -1,13 +1,62 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
+import { load } from "@cashfreepayments/cashfree-js";
 import CheckoutModal from "./CheckoutModal";
 
-const Pricing = () => { 
+const Pricing = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleProceedToPayment = (userData) => {
-    console.log("Proceeding to payment with data:", userData);
-    // Here you would typically initiate the Cashfree payment process
+  const handleProceedToPayment = async (userData) => {
+    try {
+      // 1. Create Order on the backend
+      const response = await fetch("/api/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: 1499.00, // The amount should be dynamic in a real app
+          customer: userData,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create order.");
+      }
+
+      const order = await response.json();
+      const paymentSessionId = order.payment_session_id;
+
+      if (!paymentSessionId) {
+        throw new Error("Payment Session ID not received from server.");
+      }
+
+      // 2. Initialize Cashfree SDK and Checkout
+      const cashfree = await load({
+        mode: "sandbox", // or "production"
+      });
+
+      let checkoutOptions = {
+        paymentSessionId: paymentSessionId,
+        redirectTarget: "_modal",
+      };
+
+      cashfree.checkout(checkoutOptions).then((result) => {
+        if (result.error) {
+          alert("Payment failed: " + result.error.message);
+        }
+        if (result.paymentDetails) {
+          alert("Payment successful!");
+          // You can redirect to a success page or show a success message.
+          // e.g., window.location.href = `/order-status?order_id=${order.order_id}`;
+        }
+      });
+
+    } catch (error) {
+      console.error("Payment Error:", error);
+      alert(`An error occurred: ${error.message}`);
+    }
   };
 
   return (
@@ -16,6 +65,7 @@ const Pricing = () => {
         id="pricing"
         className="relative min-h-screen flex items-center justify-center py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-[#1E1E1E] via-[#2A2A2A] to-[#1E1E1E] text-white overflow-hidden"
       >
+        {/* ... rest of the JSX remains the same ... */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-64 h-64 bg-[#FFC700]/10 rounded-full filter blur-3xl animate-pulse"></div>
           <div
