@@ -76,6 +76,8 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
+  // All hooks must be called before any return
+  // Move conditional rendering after hooks
   if (!isOpen) return null;
 
   // Load Cashfree JS SDK
