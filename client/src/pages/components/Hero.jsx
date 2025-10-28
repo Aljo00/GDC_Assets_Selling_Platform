@@ -1,10 +1,6 @@
 import { Target } from "lucide-react";
 
-interface HeroProps {
-  scrollToPricing: () => void;
-}
-
-const Hero = ({ scrollToPricing }: HeroProps) => {
+const Hero = ({ scrollToPricing }) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1E1E1E] via-[#2A2A2A] to-[#1E1E1E] text-white py-12 sm:py-20 px-4 sm:px-6 overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-5"></div>

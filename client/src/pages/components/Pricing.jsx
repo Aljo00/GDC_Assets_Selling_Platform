@@ -5,12 +5,7 @@ import CheckoutModal from "./CheckoutModal";
 const Pricing = () => { 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleProceedToPayment = (userData: {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-  }) => {
+  const handleProceedToPayment = (userData) => {
     console.log("Proceeding to payment with data:", userData);
     // Here you would typically initiate the Cashfree payment process
   };

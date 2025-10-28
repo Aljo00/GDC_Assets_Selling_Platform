@@ -3,22 +3,11 @@ import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 import cashfree_logo from "../../assets/cashfree_logo.png";
 
-interface CheckoutModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onProceedToPayment: (data: {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-  }) => void;
-}
-
 const CheckoutModal = ({
   isOpen,
   onClose,
   onProceedToPayment,
-}: CheckoutModalProps) => {
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,11 +15,11 @@ const CheckoutModal = ({
     address: "",
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState({});
   const [agreed, setAgreed] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
-  const validateField = (name: string, value: string) => {
+  const validateField = (name, value) => {
     let error = "";
     switch (name) {
       case "name":
@@ -61,14 +50,14 @@ const CheckoutModal = ({
     setIsFormValid(!hasErrors && allFieldsFilled && agreed);
   }, [formData, errors, agreed]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     const error = validateField(name, value);
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = (e) => {
     const { name, value } = e.target;
     const error = validateField(name, value);
     setErrors((prev) => ({ ...prev, [name]: error }));

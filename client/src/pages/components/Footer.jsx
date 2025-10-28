@@ -1,11 +1,7 @@
 import { PlayCircle, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 
-interface FooterProps {
-  scrollToPricing: () => void;
-}
-
-const Footer = ({ scrollToPricing }: FooterProps) => {
+const Footer = ({ scrollToPricing }) => {
   return (
     <footer className="relative bg-gradient-to-br from-[#1E1E1E] via-black to-[#1E1E1E] text-white py-12 sm:py-16 px-4 sm:px-6 overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-5"></div>
