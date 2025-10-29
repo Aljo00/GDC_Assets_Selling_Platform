@@ -14,10 +14,27 @@ const PaymentStatus = () => {
 
     if (!order_id) {
       setMessage("No order ID found.");
-      toast.error("Payment verification failed: No order ID.");
-      navigate("/");
+      toast.error("Payment verification failed: No order ID.", {
+        icon: '❌',
+        duration: 3000,
+        style: {
+          borderRadius: '10px',
+          background: '#333',
+          color: '#fff',
+        },
+      });
+      setTimeout(() => navigate("/"), 3000);
       return;
     }
+
+    // Show initial loading toast
+    const loadingToast = toast.loading("Verifying payment...", {
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        color: '#fff',
+      },
+    });
 
     const verifyPayment = async () => {
       try {
@@ -37,8 +54,19 @@ const PaymentStatus = () => {
 
         setMessage(data.message);
 
+        // Dismiss the loading toast
+        toast.dismiss(loadingToast);
+
         if (data.payment_status === "PAID") {
-          toast.success("Payment successful! Thank you for your purchase.");
+          toast.success("Payment successful! Redirecting to order details...", {
+            icon: '✅',
+            duration: 3000,
+            style: {
+              borderRadius: '10px',
+              background: '#333',
+              color: '#fff',
+            },
+          });
           // Store order details in localStorage for the success page
           localStorage.setItem(
             "lastSuccessfulOrder",
@@ -49,13 +77,28 @@ const PaymentStatus = () => {
             navigate("/order-success");
           }, 2000);
         } else if (data.payment_status === "PENDING") {
-          toast.loading("Payment is still processing. Please wait...");
+          const pendingToast = toast.loading("Payment is still processing...", {
+            style: {
+              borderRadius: '10px',
+              background: '#333',
+              color: '#fff',
+            },
+          });
           // Recheck after 5 seconds
           setTimeout(() => {
+            toast.dismiss(pendingToast);
             verifyPayment();
           }, 5000);
         } else {
-          toast.error(data.message);
+          toast.error(data.message, {
+            icon: '❌',
+            duration: 3000,
+            style: {
+              borderRadius: '10px',
+              background: '#333',
+              color: '#fff',
+            },
+          });
           // Redirect to homepage after a delay
           setTimeout(() => {
             navigate("/");
@@ -64,8 +107,17 @@ const PaymentStatus = () => {
       } catch (error) {
         console.error("Verification error:", error);
         setMessage(error.message);
-        toast.error(error.message);
-        navigate("/");
+        toast.dismiss(loadingToast);
+        toast.error(error.message, {
+          icon: '❌',
+          duration: 3000,
+          style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
+          },
+        });
+        setTimeout(() => navigate("/"), 3000);
       }
     };
 
