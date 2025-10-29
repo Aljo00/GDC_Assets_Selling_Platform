@@ -54,7 +54,7 @@ const Hero = ({ scrollToPricing }) => {
               <div className="relative bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20 shadow-2xl">
                 <div className="flex flex-col items-center mb-6">
                   <img
-                    src="/CEO.JPG"
+                    src="/CEO.jpg"
                     alt="Amal Gopal - CEO"
                     className="w-28 h-28 rounded-full object-cover border-4 border-[#FFC700] shadow-lg mb-4"
                   />
