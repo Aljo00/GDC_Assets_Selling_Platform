@@ -8,6 +8,7 @@ const PaymentStatus = () => {
   const [message, setMessage] = useState(
     "Verifying your payment, please wait..."
   );
+  const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
     const order_id = searchParams.get("order_id");
@@ -53,6 +54,8 @@ const PaymentStatus = () => {
         }
 
         setMessage(data.message);
+        // Save returned order details for UI
+        if (data.order) setOrderDetails(data.order);
 
         // Dismiss the loading toast
         toast.dismiss(loadingToast);
@@ -125,12 +128,73 @@ const PaymentStatus = () => {
   }, [searchParams, navigate]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="p-8 bg-white shadow-lg rounded-lg text-center">
-        <h1 className="text-2xl font-bold mb-4">Payment Status</h1>
-        <p>{message}</p>
+    <section
+      id="payment-status"
+      className="relative min-h-screen flex items-center justify-center py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-[#1E1E1E] via-[#2A2A2A] to-[#1E1E1E] text-white overflow-hidden"
+    >
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-20 w-64 h-64 bg-[#FFC700]/10 rounded-full filter blur-3xl animate-pulse"></div>
+        <div
+          className="absolute bottom-20 right-20 w-96 h-96 bg-[#FFD700]/10 rounded-full filter blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
       </div>
-    </div>
+
+      <div className="relative max-w-3xl w-full">
+        <div className="relative bg-white/5 backdrop-blur-xl p-8 sm:p-12 rounded-3xl border-2 border-[#FFC700]/30 shadow-2xl">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl sm:text-3xl font-extrabold">
+              Payment Status
+            </h1>
+            <div className="text-sm text-gray-300">Order verification</div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="text-gray-200">{message}</div>
+
+            {orderDetails && (
+              <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-white/3 p-4 rounded-lg">
+                <div>
+                  <dt className="text-xs text-gray-300">Order ID</dt>
+                  <dd className="text-sm font-medium text-white">
+                    {orderDetails.order_id}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-300">Amount</dt>
+                  <dd className="text-sm font-medium text-white">
+                    ₹{orderDetails.amount || "N/A"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-300">Status</dt>
+                  <dd
+                    className={`text-sm font-semibold ${
+                      orderDetails.payment_status === "PAID"
+                        ? "text-green-400"
+                        : orderDetails.payment_status === "PENDING"
+                        ? "text-yellow-300"
+                        : "text-red-400"
+                    }`}
+                  >
+                    {orderDetails.payment_status}
+                  </dd>
+                </div>
+              </dl>
+            )}
+
+            <div className="pt-4">
+              <button
+                onClick={() => navigate("/")}
+                className="inline-flex items-center px-6 py-3 bg-[#FFC700] text-[#1E1E1E] rounded-full font-bold hover:opacity-90 transition"
+              >
+                Return to Home
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

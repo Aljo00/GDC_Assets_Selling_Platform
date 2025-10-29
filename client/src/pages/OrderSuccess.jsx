@@ -101,17 +101,25 @@ const OrderSuccess = () => {
 
   if (!orderDetails) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
+      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1E1E1E] via-[#2A2A2A] to-[#1E1E1E] text-white">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FFC700]"></div>
+      </section>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white shadow-lg rounded-lg px-8 py-10">
-          <div className="text-center mb-8">
+    <section className="relative min-h-screen flex items-center justify-center py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-[#1E1E1E] via-[#2A2A2A] to-[#1E1E1E] text-white overflow-hidden">
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-20 w-64 h-64 bg-[#FFC700]/10 rounded-full filter blur-3xl animate-pulse"></div>
+        <div
+          className="absolute bottom-20 right-20 w-96 h-96 bg-[#FFD700]/10 rounded-full filter blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+      </div>
+
+      <div className="relative max-w-3xl w-full">
+        <div className="relative bg-white/5 backdrop-blur-xl p-8 sm:p-12 rounded-3xl border-2 border-[#FFC700]/30 shadow-2xl">
+          <div className="text-center mb-6">
             <div className="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <svg
                 className="h-8 w-8 text-green-500"
@@ -127,38 +135,48 @@ const OrderSuccess = () => {
                 />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-extrabold mb-1">
               Payment Successful!
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-sm text-gray-300">
               Your order has been confirmed
             </p>
           </div>
 
-          <div className="border-t border-gray-200 pt-8">
-            <dl className="divide-y divide-gray-200">
+          <div className="pt-4">
+            <dl className="divide-y divide-white/5">
               <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt className="text-sm font-medium text-gray-500">Order ID</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <dt className="text-sm font-medium text-gray-300">Order ID</dt>
+                <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">
                   {orderDetails.order_id}
                 </dd>
               </div>
               <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt className="text-sm font-medium text-gray-500">Amount</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <dt className="text-sm font-medium text-gray-300">Amount</dt>
+                <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">
                   ₹{orderDetails.amount || "N/A"}
                 </dd>
               </div>
               <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt className="text-sm font-medium text-gray-500">Status</dt>
-                <dd className="mt-1 text-sm text-green-600 font-semibold sm:mt-0 sm:col-span-2">
+                <dt className="text-sm font-medium text-gray-300">Status</dt>
+                <dd
+                  className={`mt-1 text-sm font-semibold sm:mt-0 sm:col-span-2 ${
+                    orderDetails.payment_status === "PAID"
+                      ? "text-green-400"
+                      : orderDetails.payment_status === "PENDING"
+                      ? "text-yellow-300"
+                      : "text-red-400"
+                  }`}
+                >
                   {orderDetails.payment_status}
                 </dd>
               </div>
               <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt className="text-sm font-medium text-gray-500">Date</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {new Date(orderDetails.created_at).toLocaleString()}
+                <dt className="text-sm font-medium text-gray-300">Date</dt>
+                <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">
+                  {orderDetails.created_at
+                    ? new Date(orderDetails.created_at).toLocaleString()
+                    : "—"}
                 </dd>
               </div>
             </dl>
@@ -167,14 +185,14 @@ const OrderSuccess = () => {
           <div className="mt-8 text-center">
             <button
               onClick={() => navigate("/")}
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              className="inline-flex items-center px-6 py-3 bg-[#FFC700] text-[#1E1E1E] rounded-full font-bold hover:opacity-90 transition"
             >
               Return to Home
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
