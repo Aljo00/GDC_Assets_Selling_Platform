@@ -34,7 +34,7 @@ const Pricing = () => {
 
       // 2. Initialize Cashfree SDK and Checkout
       const cashfree = await load({
-        mode: "production", // or "production"
+        mode: "sandbox", // or "production"
       });
 
       let checkoutOptions = {
