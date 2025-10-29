@@ -49,9 +49,38 @@ const OrderSuccess = () => {
         const data = await resp.json();
         if (resp.ok && data.order) {
           setOrderDetails(data.order);
-          toast.success("🎉 Order confirmed! Thank you for your purchase!", {
-            icon: "🎉",
-          });
+          toast.success(
+            (t) => (
+              <div className="flex flex-col space-y-1">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xl">🎉</span>
+                  <span className="font-semibold">Order confirmed!</span>
+                </div>
+                <p className="text-sm text-[#FFC700]">
+                  Thank you for your purchase!
+                </p>
+              </div>
+            ),
+            {
+              duration: 5000,
+              className: "border-2 border-[#FFC700]",
+              style: {
+                borderRadius: "12px",
+                background: "rgba(30, 30, 30, 0.9)",
+                backdropFilter: "blur(8px)",
+                color: "#fff",
+                padding: "16px",
+                boxShadow:
+                  "0 8px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 199, 0, 0.1)",
+                fontSize: "1rem",
+                fontWeight: "500",
+              },
+              iconTheme: {
+                primary: "#FFC700",
+                secondary: "#1E1E1E",
+              },
+            }
+          );
           triggerConfetti();
           return true;
         }
@@ -66,9 +95,38 @@ const OrderSuccess = () => {
         try {
           const parsedOrder = JSON.parse(storedOrder);
           setOrderDetails(parsedOrder);
-          toast.success("🎉 Order confirmed! Thank you for your purchase!", {
-            icon: "🎉",
-          });
+          toast.success(
+            (t) => (
+              <div className="flex flex-col space-y-1">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xl">🎉</span>
+                  <span className="font-semibold">Order confirmed!</span>
+                </div>
+                <p className="text-sm text-[#FFC700]">
+                  Thank you for your purchase!
+                </p>
+              </div>
+            ),
+            {
+              duration: 5000,
+              className: "border-2 border-[#FFC700]",
+              style: {
+                borderRadius: "12px",
+                background: "rgba(30, 30, 30, 0.9)",
+                backdropFilter: "blur(8px)",
+                color: "#fff",
+                padding: "16px",
+                boxShadow:
+                  "0 8px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 199, 0, 0.1)",
+                fontSize: "1rem",
+                fontWeight: "500",
+              },
+              iconTheme: {
+                primary: "#FFC700",
+                secondary: "#1E1E1E",
+              },
+            }
+          );
           triggerConfetti();
           // Clear the stored order after 5 seconds
           setTimeout(
@@ -93,7 +151,28 @@ const OrderSuccess = () => {
         return;
       }
 
-      toast.error("No order details found!");
+      toast.error(
+        (t) => (
+          <div className="flex items-center space-x-2">
+            <span className="text-xl">❌</span>
+            <span>No order details found!</span>
+          </div>
+        ),
+        {
+          duration: 4000,
+          className: "border border-red-500",
+          style: {
+            borderRadius: "12px",
+            background: "rgba(30, 30, 30, 0.9)",
+            backdropFilter: "blur(8px)",
+            color: "#fff",
+            padding: "16px",
+            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.4)",
+            fontSize: "1rem",
+            fontWeight: "500",
+          },
+        }
+      );
       navigate("/");
     })();
     // end async loader

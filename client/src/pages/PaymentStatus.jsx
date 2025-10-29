@@ -17,25 +17,45 @@ const PaymentStatus = () => {
       setMessage("No order ID found.");
       toast.error("Payment verification failed: No order ID.", {
         icon: "❌",
-        duration: 3000,
+        duration: 4000,
+        className: "border border-red-500",
         style: {
-          borderRadius: "10px",
-          background: "#333",
+          borderRadius: "12px",
+          background: "rgba(30, 30, 30, 0.9)",
+          backdropFilter: "blur(8px)",
           color: "#fff",
+          padding: "16px",
+          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.4)",
+          fontSize: "1rem",
+          fontWeight: "500",
         },
       });
-      setTimeout(() => navigate("/"), 3000);
+      setTimeout(() => navigate("/"), 4000);
       return;
     }
 
     // Show initial loading toast
-    const loadingToast = toast.loading("Verifying payment...", {
-      style: {
-        borderRadius: "10px",
-        background: "#333",
-        color: "#fff",
-      },
-    });
+    const loadingToast = toast.loading(
+      (t) => (
+        <div className="flex items-center space-x-3">
+          <div className="animate-spin h-4 w-4 border-2 border-[#FFC700] border-t-transparent rounded-full"></div>
+          <span>Verifying payment...</span>
+        </div>
+      ),
+      {
+        style: {
+          borderRadius: "12px",
+          background: "rgba(30, 30, 30, 0.9)",
+          backdropFilter: "blur(8px)",
+          color: "#fff",
+          padding: "16px",
+          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.4)",
+          fontSize: "1rem",
+          fontWeight: "500",
+          border: "1px solid #FFC700",
+        },
+      }
+    );
 
     const verifyPayment = async () => {
       try {
@@ -61,15 +81,33 @@ const PaymentStatus = () => {
         toast.dismiss(loadingToast);
 
         if (data.payment_status === "PAID") {
-          toast.success("Payment successful! Redirecting to order details...", {
-            icon: "✅",
-            duration: 3000,
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          toast.success(
+            (t) => (
+              <div className="flex items-center space-x-2">
+                <span className="text-xl">🎉</span>
+                <span>Payment successful! Redirecting to order details...</span>
+              </div>
+            ),
+            {
+              duration: 4000,
+              className: "border-2 border-[#FFC700]",
+              style: {
+                borderRadius: "12px",
+                background: "rgba(30, 30, 30, 0.9)",
+                backdropFilter: "blur(8px)",
+                color: "#fff",
+                padding: "16px",
+                boxShadow:
+                  "0 8px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 199, 0, 0.1)",
+                fontSize: "1rem",
+                fontWeight: "500",
+              },
+              iconTheme: {
+                primary: "#FFC700",
+                secondary: "#1E1E1E",
+              },
+            }
+          );
           // Store order details in localStorage for the success page
           localStorage.setItem(
             "lastSuccessfulOrder",
@@ -80,13 +118,27 @@ const PaymentStatus = () => {
             navigate("/order-success");
           }, 2000);
         } else if (data.payment_status === "PENDING") {
-          const pendingToast = toast.loading("Payment is still processing...", {
-            style: {
-              borderRadius: "10px",
-              background: "#333",
-              color: "#fff",
-            },
-          });
+          const pendingToast = toast.loading(
+            (t) => (
+              <div className="flex items-center space-x-3">
+                <div className="animate-spin h-4 w-4 border-2 border-yellow-400 border-t-transparent rounded-full"></div>
+                <span>Payment is still processing...</span>
+              </div>
+            ),
+            {
+              style: {
+                borderRadius: "12px",
+                background: "rgba(30, 30, 30, 0.9)",
+                backdropFilter: "blur(8px)",
+                color: "#fff",
+                padding: "16px",
+                boxShadow: "0 8px 16px rgba(0, 0, 0, 0.4)",
+                fontSize: "1rem",
+                fontWeight: "500",
+                border: "1px solid #FFD700",
+              },
+            }
+          );
           // Recheck after 5 seconds
           setTimeout(() => {
             toast.dismiss(pendingToast);
