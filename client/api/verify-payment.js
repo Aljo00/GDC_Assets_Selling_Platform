@@ -70,38 +70,38 @@ export default async function handler(req, res) {
     } else {
       paymentStatus = "FAILED";
     }
-    // Extract relevant payment details
+    // Extract latest transaction (for response only) and update only the
+    // columns that exist in the `orders` table (payment_status, updated_at).
     const latestTransaction = transactions[0];
-    const paymentInfo = {
-      payment_status: paymentStatus,
-      updated_at: new Date().toISOString(),
-      payment_completion_time:
-        latestTransaction.payment_completion_time || null,
-      payment_method: latestTransaction.payment_group || null,
-      transaction_id: latestTransaction.cf_payment_id || null,
-    };
 
-    // Update the order in Supabase with new status
     const { data: updatedOrder, error: updateError } = await supabase
       .from("orders")
-      .update(paymentInfo)
+      .update({
+        payment_status: paymentStatus,
+        updated_at: new Date().toISOString(),
+      })
       .eq("order_id", order_id)
       .select()
       .single();
 
     if (updateError) {
-      throw updateError;
+      console.error("Supabase update error:", updateError);
+      return res.status(500).json({ error: "Failed to update order status." });
     }
 
-    // Send the final payment status and order details to the frontend
-    res.status(200).json({
+    // Send the final payment status and order details to the frontend. We
+    // include the transaction details in the response but do not persist
+    // extra fields to the database.
+    return res.status(200).json({
       payment_status: paymentStatus,
       order: updatedOrder,
-      transaction_details: transactions[0],
+      transaction_details: latestTransaction,
       message:
         paymentStatus === "PAID"
           ? "Payment successful! Your order has been confirmed."
-          : `Payment ${normalizedStatus.toLowerCase()}. Please contact support if you need assistance.`,
+          : paymentStatus === "PENDING"
+          ? "Payment is still pending. Please wait and refresh this page."
+          : "Payment failed. Please contact support or try again.",
     });
   } catch (error) {
     console.error(
