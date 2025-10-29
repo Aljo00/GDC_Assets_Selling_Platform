@@ -63,8 +63,8 @@ export default async function handler(req, res) {
       },
       order_meta: {
         // This URL will be used to redirect the user after payment
-        // IMPORTANT: Replace this with your actual production return URL
-        return_url: `https://www.cashfree.com/devstudio/preview/pg/web/checkout?order_id={order_id}`,
+        // It points to a page within the app that will verify the payment status
+        return_url: `/payment-status?order_id={order_id}`,
       },
     };
 
