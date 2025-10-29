@@ -1,29 +1,30 @@
-
-import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const PaymentStatus = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [message, setMessage] = useState('Verifying your payment, please wait...');
+  const [message, setMessage] = useState(
+    "Verifying your payment, please wait..."
+  );
 
   useEffect(() => {
-    const order_id = searchParams.get('order_id');
+    const order_id = searchParams.get("order_id");
 
     if (!order_id) {
-      setMessage('No order ID found.');
-      toast.error('Payment verification failed: No order ID.');
-      navigate('/');
+      setMessage("No order ID found.");
+      toast.error("Payment verification failed: No order ID.");
+      navigate("/");
       return;
     }
 
     const verifyPayment = async () => {
       try {
-        const response = await fetch('/api/verify-payment', {
-          method: 'POST',
+        const response = await fetch("/api/verify-payment", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ order_id }),
         });
@@ -31,24 +32,40 @@ const PaymentStatus = () => {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || 'Payment verification failed.');
+          throw new Error(data.error || "Payment verification failed.");
         }
 
-        if (data.payment_status === 'PAID') {
-          setMessage('Payment Successful! Your order has been confirmed.');
-          // You can optionally redirect to a dedicated success page
-          // navigate('/order-success');
+        setMessage(data.message);
+
+        if (data.payment_status === "PAID") {
+          toast.success("Payment successful! Thank you for your purchase.");
+          // Store order details in localStorage for the success page
+          localStorage.setItem(
+            "lastSuccessfulOrder",
+            JSON.stringify(data.order)
+          );
+          // Redirect to success page after a short delay
+          setTimeout(() => {
+            navigate("/order-success");
+          }, 2000);
+        } else if (data.payment_status === "PENDING") {
+          toast.loading("Payment is still processing. Please wait...");
+          // Recheck after 5 seconds
+          setTimeout(() => {
+            verifyPayment();
+          }, 5000);
         } else {
-          // Handle other statuses like 'FAILED', 'PENDING', etc.
-          setMessage(`Payment ${data.payment_status}. Redirecting to homepage...`);
-          toast.error(`Payment failed or is still pending. Please try again.`);
-          navigate('/');
+          toast.error(data.message);
+          // Redirect to homepage after a delay
+          setTimeout(() => {
+            navigate("/");
+          }, 3000);
         }
       } catch (error) {
-        console.error('Verification error:', error);
+        console.error("Verification error:", error);
         setMessage(error.message);
         toast.error(error.message);
-        navigate('/');
+        navigate("/");
       }
     };
 
