@@ -64,7 +64,7 @@ export default async function handler(req, res) {
       order_meta: {
         // This URL will be used to redirect the user after payment
         // It points to a page within the app that will verify the payment status
-        return_url: `/payment-status?order_id={order_id}`,
+        return_url: `https://assets.gomdigitalconsultancy.com/payment-status?order_id={order_id}`,
       },
     };
 
