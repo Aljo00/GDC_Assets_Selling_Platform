@@ -36,32 +36,67 @@ const OrderSuccess = () => {
       frame();
     };
 
-    // Get order details from localStorage
+    // Get order details from localStorage or URL param (fallback)
     const storedOrder = localStorage.getItem("lastSuccessfulOrder");
 
-    if (!storedOrder) {
+    const loadFromServer = async (orderId) => {
+      try {
+        const resp = await fetch("/api/verify-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order_id: orderId }),
+        });
+        const data = await resp.json();
+        if (resp.ok && data.order) {
+          setOrderDetails(data.order);
+          toast.success("🎉 Order confirmed! Thank you for your purchase!", {
+            icon: "🎉",
+          });
+          triggerConfetti();
+          return true;
+        }
+      } catch (err) {
+        console.error("Failed to load order from server", err);
+      }
+      return false;
+    };
+
+    (async () => {
+      if (storedOrder) {
+        try {
+          const parsedOrder = JSON.parse(storedOrder);
+          setOrderDetails(parsedOrder);
+          toast.success("🎉 Order confirmed! Thank you for your purchase!", {
+            icon: "🎉",
+          });
+          triggerConfetti();
+          // Clear the stored order after 5 seconds
+          setTimeout(
+            () => localStorage.removeItem("lastSuccessfulOrder"),
+            5000
+          );
+          return;
+        } catch (e) {
+          console.warn("Could not parse stored order", e);
+        }
+      }
+
+      // Fallback: try to read order_id from URL and fetch from server
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get("order_id");
+      if (orderId) {
+        const ok = await loadFromServer(orderId);
+        if (!ok) {
+          toast.error("No order details found");
+          navigate("/");
+        }
+        return;
+      }
+
       toast.error("No order details found!");
       navigate("/");
-      return;
-    }
-
-    try {
-      const parsedOrder = JSON.parse(storedOrder);
-      setOrderDetails(parsedOrder);
-      toast.success("🎉 Order confirmed! Thank you for your purchase!", {
-        duration: 5000,
-        icon: "🎉",
-      });
-      triggerConfetti();
-
-      // Clear the stored order after 5 seconds
-      setTimeout(() => {
-        localStorage.removeItem("lastSuccessfulOrder");
-      }, 5000);
-    } catch (error) {
-      toast.error("Error loading order details");
-      navigate("/");
-    }
+    })();
+    // end async loader
   }, [navigate]);
 
   if (!orderDetails) {
