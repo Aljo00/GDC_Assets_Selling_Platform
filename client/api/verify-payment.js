@@ -39,42 +39,43 @@ export default async function handler(req, res) {
       throw new Error("Order not found in database");
     }
 
-    // Verify payment status with Cashfree using Order API
-    const orderStatus = await cashfree.orders.getStatus({
-      orderId: order_id,
-    });
+    // Verify payment status with Cashfree using PGOrderFetchPayments
+    const statusResponse = await cashfree.PGOrderFetchPayments(order_id);
+    console.log("Cashfree Response:", statusResponse); // For debugging
 
-    if (!orderStatus || !orderStatus.order_status) {
-      throw new Error("Unable to fetch payment status");
+    if (
+      !statusResponse ||
+      !statusResponse.data ||
+      statusResponse.data.length === 0
+    ) {
+      throw new Error("No payment data found for this order");
     }
 
-    const paymentStatus = orderStatus.order_status.toUpperCase();
+    // Check all transactions for this order
+    const transactions = statusResponse.data;
+    let paymentStatus;
 
-    // Map Cashfree status to our status
-    let normalizedStatus;
-    switch (paymentStatus) {
-      case "SUCCESS":
-      case "PAID":
-        normalizedStatus = "PAID";
-        break;
-      case "FAILED":
-      case "CANCELLED":
-        normalizedStatus = "FAILED";
-        break;
-      case "PENDING":
-      case "PROCESSING":
-        normalizedStatus = "PENDING";
-        break;
-      default:
-        normalizedStatus = "UNKNOWN";
-    }
-
-    // Update the order in Supabase with new status
+    if (
+      transactions.filter(
+        (transaction) => transaction.payment_status === "SUCCESS"
+      ).length > 0
+    ) {
+      paymentStatus = "PAID";
+    } else if (
+      transactions.filter(
+        (transaction) => transaction.payment_status === "PENDING"
+      ).length > 0
+    ) {
+      paymentStatus = "PENDING";
+    } else {
+      paymentStatus = "FAILED";
+    } // Update the order in Supabase with new status
     const { data: updatedOrder, error: updateError } = await supabase
       .from("orders")
       .update({
-        payment_status: normalizedStatus,
+        payment_status: paymentStatus,
         updated_at: new Date().toISOString(),
+        payment_details: transactions[0], // Store the latest transaction details
       })
       .eq("order_id", order_id)
       .select()
@@ -86,10 +87,11 @@ export default async function handler(req, res) {
 
     // Send the final payment status and order details to the frontend
     res.status(200).json({
-      payment_status: normalizedStatus,
+      payment_status: paymentStatus,
       order: updatedOrder,
+      transaction_details: transactions[0],
       message:
-        normalizedStatus === "PAID"
+        paymentStatus === "PAID"
           ? "Payment successful! Your order has been confirmed."
           : `Payment ${normalizedStatus.toLowerCase()}. Please contact support if you need assistance.`,
     });
