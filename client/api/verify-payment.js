@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   const cashfree = new Cashfree(
-    CFEnvironment.SANDBOX,
+    CFEnvironment.PRODUCTION,
     process.env.CASHFREE_APP_ID,
     process.env.CASHFREE_SECRET_KEY
   );
