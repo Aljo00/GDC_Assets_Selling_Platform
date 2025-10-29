@@ -69,14 +69,22 @@ export default async function handler(req, res) {
       paymentStatus = "PENDING";
     } else {
       paymentStatus = "FAILED";
-    } // Update the order in Supabase with new status
+    }
+    // Extract relevant payment details
+    const latestTransaction = transactions[0];
+    const paymentInfo = {
+      payment_status: paymentStatus,
+      updated_at: new Date().toISOString(),
+      payment_completion_time:
+        latestTransaction.payment_completion_time || null,
+      payment_method: latestTransaction.payment_group || null,
+      transaction_id: latestTransaction.cf_payment_id || null,
+    };
+
+    // Update the order in Supabase with new status
     const { data: updatedOrder, error: updateError } = await supabase
       .from("orders")
-      .update({
-        payment_status: paymentStatus,
-        updated_at: new Date().toISOString(),
-        payment_details: transactions[0], // Store the latest transaction details
-      })
+      .update(paymentInfo)
       .eq("order_id", order_id)
       .select()
       .single();
