@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: "GDC Assets <orders@gdc-assets.com>", // Update this with your verified domain
+      from: "GDC Assets <noreply@assets.gomdigitalconsultancy.com>", // Update this with your verified domain
       to: [order.email],
       subject: "Your GDC Assets Purchase - Access Link Inside! 🎉",
       html: `
