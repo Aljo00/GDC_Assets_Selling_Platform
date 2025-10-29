@@ -15,12 +15,12 @@ const PaymentStatus = () => {
     if (!order_id) {
       setMessage("No order ID found.");
       toast.error("Payment verification failed: No order ID.", {
-        icon: '❌',
+        icon: "❌",
         duration: 3000,
         style: {
-          borderRadius: '10px',
-          background: '#333',
-          color: '#fff',
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
         },
       });
       setTimeout(() => navigate("/"), 3000);
@@ -30,9 +30,9 @@ const PaymentStatus = () => {
     // Show initial loading toast
     const loadingToast = toast.loading("Verifying payment...", {
       style: {
-        borderRadius: '10px',
-        background: '#333',
-        color: '#fff',
+        borderRadius: "10px",
+        background: "#333",
+        color: "#fff",
       },
     });
 
@@ -59,12 +59,12 @@ const PaymentStatus = () => {
 
         if (data.payment_status === "PAID") {
           toast.success("Payment successful! Redirecting to order details...", {
-            icon: '✅',
+            icon: "✅",
             duration: 3000,
             style: {
-              borderRadius: '10px',
-              background: '#333',
-              color: '#fff',
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
             },
           });
           // Store order details in localStorage for the success page
@@ -79,9 +79,9 @@ const PaymentStatus = () => {
         } else if (data.payment_status === "PENDING") {
           const pendingToast = toast.loading("Payment is still processing...", {
             style: {
-              borderRadius: '10px',
-              background: '#333',
-              color: '#fff',
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
             },
           });
           // Recheck after 5 seconds
@@ -91,12 +91,12 @@ const PaymentStatus = () => {
           }, 5000);
         } else {
           toast.error(data.message, {
-            icon: '❌',
+            icon: "❌",
             duration: 3000,
             style: {
-              borderRadius: '10px',
-              background: '#333',
-              color: '#fff',
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
             },
           });
           // Redirect to homepage after a delay
@@ -109,12 +109,12 @@ const PaymentStatus = () => {
         setMessage(error.message);
         toast.dismiss(loadingToast);
         toast.error(error.message, {
-          icon: '❌',
+          icon: "❌",
           duration: 3000,
           style: {
-            borderRadius: '10px',
-            background: '#333',
-            color: '#fff',
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
           },
         });
         setTimeout(() => navigate("/"), 3000);
