@@ -1,12 +1,23 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { load } from "@cashfreepayments/cashfree-js";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import CheckoutModal from "./CheckoutModal";
 
 const Pricing = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleProceedToPayment = async (userData) => {
+    // Show loading toast while creating order
+    const loadingToast = toast.loading("Processing your payment...", {
+      style: {
+        borderRadius: "10px",
+        background: "#333",
+        color: "#fff",
+      },
+    });
     try {
       // 1. Create Order on the backend
       const response = await fetch("/api/create-order", {
@@ -15,13 +26,22 @@ const Pricing = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: 1499.00, // The amount should be dynamic in a real app
+          amount: 1499.0, // The amount should be dynamic in a real app
           customer: userData,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
+        toast.dismiss(loadingToast);
+        toast.error(errorData.error || "Failed to create order", {
+          icon: "❌",
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        });
         throw new Error(errorData.error || "Failed to create order.");
       }
 
@@ -42,20 +62,50 @@ const Pricing = () => {
         redirectTarget: "_modal",
       };
 
+      // Dismiss the loading toast before opening Cashfree checkout
+      toast.dismiss(loadingToast);
+
       cashfree.checkout(checkoutOptions).then((result) => {
         if (result.error) {
-          alert("Payment failed: " + result.error.message);
+          toast.error(`Payment failed: ${result.error.message}`, {
+            icon: "❌",
+            duration: 5000,
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
         }
         if (result.paymentDetails) {
-          alert("Payment successful!");
-          // You can redirect to a success page or show a success message.
-          // e.g., window.location.href = `/order-status?order_id=${order.order_id}`;
+          // Show success toast
+          toast.success("Payment initiated successfully!", {
+            icon: "🎉",
+            style: {
+              borderRadius: "10px",
+              background: "#333",
+              color: "#fff",
+            },
+          });
+
+          // Redirect to payment status page
+          navigate(`/payment-status?order_id=${order.order_id}`);
         }
       });
-
     } catch (error) {
       console.error("Payment Error:", error);
-      alert(`An error occurred: ${error.message}`);
+      toast.dismiss(loadingToast);
+      toast.error(`Payment Error: ${error.message}`, {
+        icon: "❌",
+        duration: 5000,
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+      // Close the modal after error
+      setIsModalOpen(false);
     }
   };
 
