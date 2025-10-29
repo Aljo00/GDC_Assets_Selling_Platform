@@ -217,9 +217,19 @@ const OrderSuccess = () => {
             <h1 className="text-3xl font-extrabold mb-1">
               Payment Successful!
             </h1>
-            <p className="text-sm text-gray-300">
-              Your order has been confirmed
-            </p>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-300">
+                Your order has been confirmed
+              </p>
+              <div className="mt-2 bg-[#FFC700]/10 p-4 rounded-xl border border-[#FFC700]/20">
+                <p className="text-sm text-white">
+                  <span className="text-[#FFC700]">Important:</span> We'll send
+                  the digital assets access link to your email (
+                  {orderDetails.email || "your registered email"}). Please check
+                  your inbox in the next few minutes.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="pt-4">
