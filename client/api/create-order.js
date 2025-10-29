@@ -1,4 +1,3 @@
-
 import { createClient } from "@supabase/supabase-js";
 import { Cashfree, CFEnvironment } from "cashfree-pg";
 
@@ -12,7 +11,9 @@ export default async function handler(req, res) {
   const { amount, customer } = req.body;
 
   if (!amount || !customer) {
-    return res.status(400).json({ error: "Missing required body parameters: amount and customer." });
+    return res.status(400).json({
+      error: "Missing required body parameters: amount and customer.",
+    });
   }
 
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
@@ -26,7 +27,7 @@ export default async function handler(req, res) {
   try {
     // Insert order data into Supabase
     const { data: orderData, error: orderError } = await supabase
-      .from('orders')
+      .from("orders")
       .insert([
         {
           order_id: orderId,
@@ -35,7 +36,7 @@ export default async function handler(req, res) {
           phone: customer.phone,
           address: customer.address,
           amount: amount,
-          payment_status: 'pending',
+          payment_status: "pending",
         },
       ]);
 
@@ -73,9 +74,16 @@ export default async function handler(req, res) {
 
     // Send the successful response data (including payment_session_id) to the frontend
     res.status(200).json(response.data);
-
   } catch (error) {
-    console.error("Full error response:", error.response ? error.response.data : error.message);
-    res.status(500).json({ error: (error.response && error.response.data) ? error.response.data.message : "Failed to create order." });
+    console.error(
+      "Full error response:",
+      error.response ? error.response.data : error.message
+    );
+    res.status(500).json({
+      error:
+        error.response && error.response.data
+          ? error.response.data.message
+          : "Failed to create order.",
+    });
   }
 }

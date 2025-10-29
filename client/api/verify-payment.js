@@ -28,17 +28,27 @@ export default async function handler(req, res) {
   );
 
   try {
-    // Verify payment status with Cashfree
-    // Get current date in YYYY-MM-DD format
-    const today = new Date().toISOString().split("T")[0];
-    const statusResponse = await cashfree.PGOrderFetchPayments(today, order_id);
+    // First, get the order from Supabase to verify it exists
+    const { data: existingOrder, error: orderError } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("order_id", order_id)
+      .single();
 
-    if (!statusResponse.data || statusResponse.data.length === 0) {
-      throw new Error("No payment found for this order.");
+    if (orderError || !existingOrder) {
+      throw new Error("Order not found in database");
     }
 
-    const payment = statusResponse.data[0]; // Get the most recent payment attempt
-    const paymentStatus = payment.payment_status.toUpperCase();
+    // Verify payment status with Cashfree using Order API
+    const orderStatus = await cashfree.orders.getStatus({
+      orderId: order_id,
+    });
+
+    if (!orderStatus || !orderStatus.order_status) {
+      throw new Error("Unable to fetch payment status");
+    }
+
+    const paymentStatus = orderStatus.order_status.toUpperCase();
 
     // Map Cashfree status to our status
     let normalizedStatus;
@@ -59,8 +69,8 @@ export default async function handler(req, res) {
         normalizedStatus = "UNKNOWN";
     }
 
-    // Update the order in Supabase
-    const { data: order, error: updateError } = await supabase
+    // Update the order in Supabase with new status
+    const { data: updatedOrder, error: updateError } = await supabase
       .from("orders")
       .update({
         payment_status: normalizedStatus,
@@ -77,7 +87,7 @@ export default async function handler(req, res) {
     // Send the final payment status and order details to the frontend
     res.status(200).json({
       payment_status: normalizedStatus,
-      order: order,
+      order: updatedOrder,
       message:
         normalizedStatus === "PAID"
           ? "Payment successful! Your order has been confirmed."
@@ -88,13 +98,11 @@ export default async function handler(req, res) {
       "Full error response:",
       error.response ? error.response.data : error.message
     );
-    res
-      .status(500)
-      .json({
-        error:
-          error.response && error.response.data
-            ? error.response.data.message
-            : "Failed to verify payment.",
-      });
+    res.status(500).json({
+      error:
+        error.response && error.response.data
+          ? error.response.data.message
+          : "Failed to verify payment.",
+    });
   }
 }
