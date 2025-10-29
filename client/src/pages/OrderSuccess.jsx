@@ -7,6 +7,57 @@ const OrderSuccess = () => {
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState(null);
 
+  // Function to send order confirmation email
+  const sendOrderEmail = async (orderData) => {
+    try {
+      if (orderData.payment_status === "PAID") {
+        const emailResp = await fetch("/api/send-order-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order: orderData }),
+        });
+
+        const emailData = await emailResp.json();
+
+        if (emailResp.ok) {
+          toast.success(
+            (t) => (
+              <div className="flex items-center space-x-2">
+                <span className="text-xl">📧</span>
+                <span>Access link sent to your email!</span>
+              </div>
+            ),
+            {
+              duration: 5000,
+              className: "border-2 border-[#FFC700]",
+              style: {
+                borderRadius: "12px",
+                background: "rgba(30, 30, 30, 0.9)",
+                backdropFilter: "blur(8px)",
+                color: "#fff",
+                padding: "16px",
+                boxShadow:
+                  "0 8px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 199, 0, 0.1)",
+                fontSize: "1rem",
+                fontWeight: "500",
+              },
+              iconTheme: {
+                primary: "#FFC700",
+                secondary: "#1E1E1E",
+              },
+            }
+          );
+        } else {
+          console.error("Failed to send email:", emailData.error);
+          toast.error("Could not send access email. Please contact support.");
+        }
+      }
+    } catch (err) {
+      console.error("Email send error:", err);
+      toast.error("Could not send access email. Please contact support.");
+    }
+  };
+
   useEffect(() => {
     // Trigger confetti animation
     const triggerConfetti = () => {
@@ -49,6 +100,8 @@ const OrderSuccess = () => {
         const data = await resp.json();
         if (resp.ok && data.order) {
           setOrderDetails(data.order);
+          // Send confirmation email if payment status is PAID
+          await sendOrderEmail(data.order);
           toast.success(
             (t) => (
               <div className="flex flex-col space-y-1">
@@ -95,6 +148,8 @@ const OrderSuccess = () => {
         try {
           const parsedOrder = JSON.parse(storedOrder);
           setOrderDetails(parsedOrder);
+          // Send confirmation email if payment status is PAID
+          await sendOrderEmail(parsedOrder);
           toast.success(
             (t) => (
               <div className="flex flex-col space-y-1">
