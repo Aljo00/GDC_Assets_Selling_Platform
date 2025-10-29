@@ -70,15 +70,15 @@ export default async function handler(req, res) {
     } else {
       paymentStatus = "FAILED";
     }
-    // Extract latest transaction (for response only) and update only the
-    // columns that exist in the `orders` table (payment_status, updated_at).
+    // Extract latest transaction (for response only). Update only the
+    // existing `payment_status` column in the `orders` table to avoid
+    // schema cache errors.
     const latestTransaction = transactions[0];
 
     const { data: updatedOrder, error: updateError } = await supabase
       .from("orders")
       .update({
         payment_status: paymentStatus,
-        updated_at: new Date().toISOString(),
       })
       .eq("order_id", order_id)
       .select()
