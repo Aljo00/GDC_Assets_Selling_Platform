@@ -13,7 +13,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Toaster /> {/* Add the Toaster component */}
+    <Toaster /> {/* Add the  oaster component */}
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
