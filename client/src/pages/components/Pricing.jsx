@@ -178,7 +178,7 @@ const Pricing = () => {
                 className="group relative bg-gradient-to-r from-[#FFC700] to-[#FFD700] text-[#1E1E1E] px-8 sm:px-12 lg:px-16 py-4 sm:py-6 rounded-full text-base sm:text-lg lg:text-2xl font-black hover:shadow-2xl hover:shadow-yellow-500/50 transition-all duration-300 transform hover:scale-105 w-full sm:w-auto"
               >
                 <span className="relative z-10">
-                  BUY THE 0-50K YOUTUBE BLUEPRINT (₹1,499)
+                  BUY THE 0-50K YOUTUBE BLUEPRINT (₹999)
                 </span>
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-300 opacity-0 group-hover:opacity-100 transition-opacity blur"></div>
               </button>
