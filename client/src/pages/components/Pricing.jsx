@@ -26,7 +26,7 @@ const Pricing = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: 1499.0, // The amount should be dynamic in a real app
+          amount: 999.0, // The amount should be dynamic in a real app
           customer: userData,
         }),
       });
@@ -138,7 +138,7 @@ const Pricing = () => {
             <div className="relative bg-white/5 backdrop-blur-xl p-8 sm:p-12 lg:p-16 rounded-3xl border-2 border-[#FFC700]/30 shadow-2xl">
               <div className="mb-6 sm:mb-8">
                 <div className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black bg-gradient-to-r from-[#FFC700] via-[#FFD700] to-[#FFC700] bg-clip-text text-transparent mb-3 sm:mb-4 drop-shadow-2xl">
-                  ₹1,499
+                  ₹999
                 </div>
                 <div className="text-lg sm:text-xl md:text-2xl text-gray-400">
                   After that →{" "}
